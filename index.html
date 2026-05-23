@@ -426,6 +426,36 @@
           padding: 20px;
         }
       }
+      .stylish-back-btn {
+        display: inline-flex;
+        align-items: center;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 20px;
+        text-decoration: none;
+        color: var(--heading);
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+      }
+      .stylish-back-btn:hover {
+        transform: translateX(-5px);
+        border-color: var(--primary);
+        background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), var(--surface));
+        color: var(--primary);
+      }
+      .stylish-back-btn .back-icon {
+        margin-right: 12px;
+        font-size: 1.3rem;
+        font-weight: 800;
+        transition: transform 0.3s ease;
+      }
+      .stylish-back-btn:hover .back-icon {
+        transform: translateX(-4px);
+      }
     </style>
   </head>
   <body>
@@ -436,6 +466,11 @@
       <p>
         React + Django/FastAPI/Laravel/NestJS/Express.js Backend + UI Component Library
       </p>
+      <div class="back-button-container">
+        <a href="backend.html" class="stylish-back-btn">
+          Go to Backend<span class="back-icon"> &nbsp; &rarr;</span>
+        </a>
+      </div>
     </div>
 
     <div class="container">
