@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Project - Academic Mentorship & Code Review Platform</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        /* Elegant Midnight Slate & Gold Theme */
+        --bg: #0f172a;
+        --surface: #1e293b;
+        --card: #334155;
+        --border: #475569;
+        --text: #cbd5e1;
+        --heading: #f8fafc;
+        --primary: #fbbf24; /* Elegant Gold */
+        --secondary: #38bdf8; /* React Cyan */
+        --tertiary: #a78bfa; /* Soft Purple */
+        --green: #34d399; /* Emerald */
+        --red: #fb7185; /* Soft Red */
+
+        --code-bg: #0b1120;
+        --code-str: #a5d6ff;
+        --code-kw: #c678dd;
+        --code-fn: #61afef;
+        --code-num: #d19a66;
+        --code-cmt: #8b949e;
+        --code-type: #e5c07b;
+
+        --radius: 14px;
+        --font: 'Inter', system-ui, -apple-system, sans-serif;
+        --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      }
+      html {
+        scroll-behavior: smooth;
+        font-size: 16px;
+      }
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+      }
+      code {
+        font-family: var(--mono);
+        font-size: 0.88rem;
+      }
+      p code,
+      li code,
+      td code {
+        background: var(--card);
+        padding: 2px 7px;
+        border-radius: 6px;
+        font-size: 0.85em;
+        color: var(--primary);
+      }
+      h1 {
+        font-size: 2.2rem;
+        color: var(--heading);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      h2 {
+        font-size: 1.4rem;
+        color: var(--heading);
+        font-weight: 700;
+        margin-bottom: 0.4em;
+      }
+      h3 {
+        font-size: 1.05rem;
+        color: var(--primary);
+        font-weight: 600;
+        margin: 1.2em 0 0.4em;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      p {
+        margin-bottom: 0.6em;
+      }
+      ul,
+      ol {
+        padding-left: 1.4em;
+        margin-bottom: 0.8em;
+      }
+      li {
+        margin-bottom: 0.4em;
+      }
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 30px 24px 80px;
+      }
+
+      /* Header */
+      .lab-header {
+        text-align: center;
+        padding: 50px 20px 40px;
+        background: linear-gradient(135deg, #020617 0%, var(--bg) 100%);
+        border-bottom: 2px solid var(--secondary);
+        margin-bottom: 40px;
+        border-radius: 0 0 24px 24px;
+      }
+      .lab-header h1 {
+        background: linear-gradient(135deg, var(--heading), var(--text));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.2em;
+      }
+      .lab-header p {
+        color: var(--secondary);
+        font-size: 1.15rem;
+        font-weight: 500;
+      }
+      .lab-badge {
+        display: inline-block;
+        background: var(--secondary);
+        color: #0f172a;
+        padding: 5px 18px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        letter-spacing: 0.02em;
+      }
+      .deadline-badge {
+        display: inline-block;
+        background: rgba(251, 191, 36, 0.15);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        padding: 5px 18px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+        margin-left: 10px;
+      }
+
+      /* Section cards */
+      .section-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px 28px;
+        margin-bottom: 24px;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s ease;
+      }
+      .section-card:hover {
+        transform: translateY(-2px);
+      }
+      .section-card h2 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .section-number {
+        background: var(--secondary);
+        color: #0f172a;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 800;
+        flex-shrink: 0;
+      }
+
+      /* Concept tags */
+      .concept-tag {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin: 0;
+      }
+      .concept-tag.api {
+        background: rgba(56, 189, 248, 0.15);
+        color: var(--secondary);
+      }
+      .concept-tag.link {
+        background: rgba(56, 189, 248, 0.15);
+        color: var(--secondary);
+        text-transform: lowercase;
+        cursor: pointer;
+      }
+      .concept-tag.state {
+        background: rgba(251, 191, 36, 0.15);
+        color: var(--primary);
+      }
+      .concept-tag.ui {
+        background: rgba(167, 139, 250, 0.15);
+        color: var(--tertiary);
+      }
+      .concept-tag.routing {
+        background: rgba(52, 211, 153, 0.15);
+        color: var(--green);
+      }
+
+      /* Boxes */
+      .hint-box {
+        background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), var(--surface));
+        border-left: 4px solid var(--green);
+        padding: 14px 18px;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        margin-top: 0.8em;
+        font-size: 0.9rem;
+      }
+      .hint-box strong {
+        color: var(--green);
+      }
+
+      .warn-box {
+        background: linear-gradient(135deg, rgba(251, 113, 133, 0.1), var(--surface));
+        border-left: 4px solid var(--red);
+        padding: 14px 18px;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        margin-top: 0.8em;
+        font-size: 0.9rem;
+      }
+      .warn-box strong {
+        color: var(--red);
+      }
+
+      .info-box {
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), var(--surface));
+        border-left: 4px solid var(--secondary);
+        padding: 14px 18px;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        margin-top: 0.8em;
+        font-size: 0.9rem;
+      }
+      .info-box strong {
+        color: var(--secondary);
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.2em;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th {
+        background: var(--card);
+        color: var(--heading);
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid var(--border);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover {
+        background: rgba(56, 189, 248, 0.05);
+      }
+
+      /* Endpoint method badge */
+      .method {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        font-family: var(--mono);
+        min-width: 55px;
+        text-align: center;
+      }
+      .method.get {
+        background: rgba(52, 211, 153, 0.15);
+        color: var(--green);
+      }
+      .method.post {
+        background: rgba(251, 191, 36, 0.15);
+        color: var(--primary);
+      }
+      .method.put {
+        background: rgba(56, 189, 248, 0.15);
+        color: var(--secondary);
+      }
+      .method.delete {
+        background: rgba(251, 113, 133, 0.15);
+        color: var(--red);
+      }
+
+      /* Team card */
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin: 1.2em 0;
+      }
+      .team-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        text-align: center;
+        transition: all 0.2s ease;
+      }
+      .team-card:hover {
+        border-color: var(--secondary);
+        background: var(--surface);
+      }
+      .team-card .member-num {
+        background: var(--secondary);
+        color: #0f172a;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+        transform: rotate(-3deg);
+      }
+      .team-card .member-num.m2 {
+        background: var(--primary);
+      }
+      .team-card .member-num.m3 {
+        background: var(--tertiary);
+      }
+      .team-card .member-num.m4 {
+        background: var(--green);
+      }
+      .team-card h3 {
+        margin: 0 0 8px;
+        text-transform: none;
+        color: var(--heading);
+        font-size: 1rem;
+        letter-spacing: normal;
+      }
+      .team-card ul {
+        text-align: left;
+        padding-left: 1.4em;
+        margin: 12px 0 0;
+        font-size: 0.85rem;
+        color: var(--text);
+      }
+      .team-card ul li {
+        margin-bottom: 6px;
+      }
+
+      /* Section divider */
+      .section-divider {
+        background: linear-gradient(90deg, var(--surface), transparent);
+        border-left: 4px solid var(--primary);
+        border-radius: 6px;
+        padding: 12px 20px;
+        margin: 40px 0 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .section-divider .section-label {
+        background: var(--primary);
+        color: #0f172a;
+        padding: 4px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .section-divider p {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--heading);
+        font-weight: 600;
+      }
+
+      /* Tips */
+      .tip-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--tertiary);
+        border-radius: 8px;
+        padding: 14px 20px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        font-size: 0.9rem;
+      }
+      .tip-icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 1.8rem;
+        }
+        .container {
+          padding: 20px 16px 60px;
+        }
+        .section-card {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="lab-header">
+      <span class="lab-badge">React Project</span>
+      <span class="deadline-badge">&#9200; Deadline: 7 days</span>
+      <h1>Academic Mentorship & Code Review Platform</h1>
+      <p>
+        React + Django/FastAPI/Laravel/NestJS/Express.js Backend + UI Component Library
+      </p>
+    </div>
+
+    <div class="container">
+      <div class="section-card">
+        <h2><span class="section-number">&#9733;</span> Project Overview</h2>
+        <p>
+          The application is a role-based mentorship and scheduling system designed for
+          technical learning environments. Instead of booking medical appointments, junior
+          developers (Students) browse technical experts (Mentors) to book 45-minute code
+          review sessions, pair programming evaluations, or mock interviews. Mentors
+          manage their weekly availability slots and evaluate submissions, while
+          administrators oversee platform integrity, configurations, and technical
+          category expansions.
+        </p>
+
+        <div class="info-box">
+          <strong>UI Framework & Constraints:</strong> You must construct the entire user
+          interface utilizing Material UI, shadcn/ui, or TailwindCSS. Bootstrap is
+          strictly prohibited. All navigation configurations must utilize dynamic
+          role-based routing through React Router.
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-label">Routes</span>
+        <p>Required Pages</p>
+      </div>
+
+      <div class="section-card">
+        <p>
+          Develop a single-page application containing the following routes, structured
+          safely with comprehensive 404 error catching parameters.
+        </p>
+        <ul>
+          <li>
+            <strong>Mentor Search / Discovery</strong> (Main landing view with functional
+            tech-stack and keyword filters)
+          </li>
+          <li>
+            <strong>Mentor Profile & Session Booking</strong> (View specialized skill
+            matrices, open scheduling segments, and book slots)
+          </li>
+          <li>
+            <strong>Student Dashboard</strong> (Track booked reviews, cancel incoming
+            slots, view text evaluations/feedback, or update profile)
+          </li>
+          <li>
+            <strong>Mentor Dashboard</strong> (Establish operating availability
+            parameters, monitor pending reviews, append evaluation notes)
+          </li>
+          <li>
+            <strong>Admin Dashboard</strong> (Moderate user access, approve/block mentor
+            requests, scale technical system categories)
+          </li>
+          <li>
+            <strong>Login</strong> (Unified authentication engine covering all security
+            access levels)
+          </li>
+          <li>
+            <strong>Register</strong> (Onboarding portal with role segregation options for
+            Students and Mentors)
+          </li>
+          <li>
+            <strong>Profile Customization</strong> (Contextual workspace to adjust
+            operational technical profiles)
+          </li>
+          <li>
+            <strong>404 Not Found</strong> (Catch-all visual wrapper intercepting
+            non-existent endpoints)
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-label">Team</span>
+        <p>Suggested Work Division</p>
+      </div>
+
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="member-num">1</div>
+          <h3>Data &amp; Auth Lead</h3>
+          <ul>
+            <li>JWT secure token extraction</li>
+            <li>Login &amp; Register view bindings</li>
+            <li>Global context definitions (Redux Toolkit/Zustand)</li>
+            <li>Role-Based Access Control filters</li>
+          </ul>
+        </div>
+        <div class="team-card">
+          <div class="member-num m2">2</div>
+          <h3>Student UX Lead</h3>
+          <ul>
+            <li>Mentor discovery & stack processing</li>
+            <li>Session reservation state controls</li>
+            <li>Real-time block overlap validation</li>
+            <li>Search pagination pipelines</li>
+          </ul>
+        </div>
+        <div class="team-card">
+          <div class="member-num m3">3</div>
+          <h3>Mentor & Admin Lead</h3>
+          <ul>
+            <li>Availability structural configurations</li>
+            <li>Moderation view data matrices</li>
+            <li>CRUD systems for technical stacks</li>
+            <li>Route code-splitting (Lazy Loading)</li>
+          </ul>
+        </div>
+        <div class="team-card">
+          <div class="member-num m4">4</div>
+          <h3>UI/UX Lead</h3>
+          <ul>
+            <li>Component library style overrides</li>
+            <li>Dark mode switch engines</li>
+            <li>i18n translation maps (LTR/RTL)</li>
+            <li>Feedback toasts & loading skeletons</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-label">Features</span>
+        <p>Core Functional Requirements</p>
+      </div>
+
+      <div class="section-card">
+        <h2>
+          <span class="section-number">1</span> Student Capabilities
+          <span class="concept-tag api">API</span>
+          <span class="concept-tag ui">UI</span>
+        </h2>
+        <ul>
+          <li>
+            <strong>Discovery Engine:</strong> Browse an optimized index of technical
+            mentors equipped with functional sorting filters for specific programming
+            stacks (e.g., Python, React, Go) and developer titles.
+          </li>
+          <li>
+            <strong>Session Reservation:</strong> Interrogate a mentor's open schedule
+            parameters and safely secure an isolated 45-minute code evaluation slot.
+          </li>
+          <li>
+            <strong>Session Management:</strong> Monitor historical, current, or pending
+            sessions from a tailored workspace. Support full capabilities to cancel,
+            shift, or review evaluations.
+          </li>
+          <li>
+            <strong>Concurrency Protection:</strong> Implement bulletproof client-side and
+            structural checks ensuring no two students can successfully book the exact
+            same mentor inside the same time interval.
+          </li>
+          <li>
+            <strong>Sorting Metrics:</strong> Arrange active mentors using specialized
+            query configurations tracking rating systems, price matrices, or current
+            availability (e.g., <code>sort_by=rating</code>).
+          </li>
+          <li>
+            <strong>Roster Pagination:</strong> Dynamically page large indices of matching
+            mentors and structural administration tables via active URL modifications
+            (e.g., <code>page=3</code>).
+          </li>
+          <li>
+            <strong>Search Input Debouncing:</strong> Force a deliberate processing
+            interval (e.g., 500ms delay) upon the discovery input interface to safely
+            govern backend API call rates.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <h2>
+          <span class="section-number">2</span> Mentor & Admin Capabilities
+          <span class="concept-tag state">State</span>
+          <span class="concept-tag routing">Routing</span>
+        </h2>
+        <ul>
+          <li>
+            <strong>Availability Matrix:</strong> Empowers technical mentors to define
+            their operating weekly schedule thresholds (specifying exact active dates,
+            hours, and days).
+          </li>
+          <li>
+            <strong>Evaluation Workspace:</strong> Monitor upcoming review schedules,
+            modify biographical profile matrices, toggle slot approval status, and
+            explicitly append code evaluation notes.
+          </li>
+          <li>
+            <strong>User Moderation Core:</strong> Provides administrators structural
+            authority to inspect user lists, approve incoming technical mentor
+            applications, or block non-compliant accounts.
+          </li>
+          <li>
+            <strong>Configuration Control (CRUD):</strong> Allow administrative accounts
+            to dynamically construct, read, update, and delete configuration files, target
+            system categories (e.g., adding "System Design" or "DevOps"), and monitor
+            sessions system-wide.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <h2>
+          <span class="section-number">3</span> UI Enhancements &amp; Auth
+          <span class="concept-tag ui">UI Components</span>
+        </h2>
+        <ul>
+          <li>
+            <strong>Component Implementation:</strong> Explicitly style interfaces
+            utilizing clean library elements. Ensure absolute avoidance of standard
+            default styles or illegal frameworks.
+          </li>
+          <li>
+            <strong>Secure Session Extraction:</strong> Conduct reliable authorization and
+            user session maintenance using JSON Web Tokens (JWT) mapped through your
+            Django REST Framework or Laravel backend endpoints.
+          </li>
+          <li>
+            <strong>Data Stream Control:</strong> Govern complex form interactions, client
+            validations, and overarching state variables safely through Context API or
+            Redux Toolkit.
+          </li>
+          <li>
+            <strong>Interface Upgrades:</strong> Build highly responsive interface
+            components including dynamic, contextual document tab title indicators
+            alongside structured Back to Top mechanics.
+          </li>
+          <li>
+            <strong>User Toast Notifications:</strong> Deliver immediate visual system
+            confirmations or clean error updates using high-quality notification packages
+            following key state mutations.
+          </li>
+          <li>
+            <strong>Skeletons & Fallbacks:</strong> Generate explicit library Skeleton
+            wrappers to mask background network lookups. Deploy clean, illustrative
+            empty-state containers if active list indicators fall to zero.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <h2>
+          <span class="section-number">4</span> Architecture &amp; Best Practices
+          <span class="concept-tag state">Architecture</span>
+        </h2>
+        <ul>
+          <li>
+            <strong>Role-Based Route Execution:</strong> Intercept and partition insecure
+            access using strict React Router structural guards to isolate student
+            workspaces, mentor profiles, and admin domains.
+          </li>
+          <li>
+            <strong>API Resilience Rules:</strong> Intercept data transaction exceptions
+            at the view or network layer, presenting elegant error context to the client
+            using visual alerts.
+          </li>
+          <li>
+            <strong>Theme Swapping:</strong> Implement a system-wide theme context
+            controller executing clean dark/light mode CSS overrides safely.
+          </li>
+          <li>
+            <strong>Decoupled Custom Hooks:</strong> Isolate component render tracks from
+            raw network protocols by creating modular hooks or tailored Axios instance
+            engines.
+          </li>
+          <li>
+            <strong>i18n Localization:</strong> Establish full structural
+            internationalization capabilities, seamlessly translating interface text nodes
+            and altering layouts to complete Right-to-Left (RTL) rules for Arabic fields.
+          </li>
+          <li>
+            <strong>Route Lazy Loading:</strong> Enhance production initialization
+            benchmarks by utilizing <code>React.lazy()</code> coupled with
+            <code>&lt;Suspense&gt;</code> to separate massive route modules like the Admin
+            Workspace.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-label">Endpoints</span>
+        <p>Expected Backend API Reference</p>
+      </div>
+
+      <div class="section-card ref-block">
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint Purpose</th>
+              <th>Suggested URL Structure</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td>Login (Obtain JWT via Unified User)</td>
+              <td><code>/api/auth/login</code></td>
+            </tr>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td>Register New User</td>
+              <td><code>/api/auth/register</code></td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td>Profile Data Fetch</td>
+              <td><code>/api/auth/profile</code></td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td>Available Mentors Index</td>
+              <td>
+                <code
+                  >/api/mentors?stack={id}&sort_by={rating}&keyword={term}&page={page}</code
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td>Mentor Availability Blocks</td>
+              <td><code>/api/mentors/{id}/availability?date=YYYY-MM-DD</code></td>
+            </tr>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td>Book Review Session</td>
+              <td><code>/api/sessions/book</code></td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td>User Booked Sessions</td>
+              <td><code>/api/sessions</code></td>
+            </tr>
+            <tr>
+              <td><span class="method put">PUT</span></td>
+              <td>Update Session Evaluation / Status</td>
+              <td><code>/api/sessions/{id}/status</code></td>
+            </tr>
+            <tr style="background: rgba(167, 139, 250, 0.05)">
+              <td>
+                <span
+                  class="method get"
+                  style="background: rgba(167, 139, 250, 0.15); color: var(--tertiary)"
+                  >GET</span
+                >
+              </td>
+              <td>
+                <strong style="color: var(--tertiary)">Fetch Session AI Audit Log</strong>
+              </td>
+              <td><code>/api/sessions/{id}/audit</code></td>
+            </tr>
+            <tr>
+              <td><span class="method get">GET</span></td>
+              <td>Admin: All Platform Users</td>
+              <td><code>/api/admin/users</code></td>
+            </tr>
+            <tr>
+              <td><span class="method put">PUT</span></td>
+              <td>Admin: Approve/Block User Status</td>
+              <td><code>/api/admin/users/{id}/status</code></td>
+            </tr>
+            <tr>
+              <td><span class="method post">POST</span></td>
+              <td>Admin: Create Technical Stack</td>
+              <td><code>/api/stacks</code></td>
+            </tr>
+            <tr>
+              <td><span class="method delete">DEL</span></td>
+              <td>Admin: Remove Technical Stack</td>
+              <td><code>/api/stacks/{id}</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-label">Delivery</span>
+        <p>Submission Guidelines</p>
+      </div>
+
+      <div class="section-card">
+        <h3>1. Timeline &amp; Estimate</h3>
+        <ul>
+          <li>
+            Provide an estimate sheet with features, initial estimates, and actual spent
+            time.
+          </li>
+          <li>Use the provided Google Sheet link (make a copy).</li>
+          <li>Maximum of <code>7 days</code> to complete and submit.</li>
+        </ul>
+
+        <h3>2. Version Control &amp; Hosting</h3>
+        <ul>
+          <li>Link project with GitHub, pushing commits per feature.</li>
+          <li>
+            Deliver the GitHub link and add <code>hassaneldash</code> to the repository.
+          </li>
+          <li>
+            Host using Cloudflare, Vercel, Netlify, or GitHub Pages and provide the live
+            link.
+          </li>
+        </ul>
+
+        <h3>3. Final Submission</h3>
+        <ul>
+          <li>Send everything to <code>hassanmeldash@gmail.com</code>.</li>
+          <li>
+            Email subject:
+            <code>ITI Zagazig | OS46 | React Project | Mentorship App | Group No.?</code>
+          </li>
+          <li>
+            Record a comprehensive video walkthrough detailing your entire application.
+            Your final grade will be evaluated on functional completeness, the structural
+            quality of your code, and a consistent GitHub commit history.
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-label">Tips</span>
+        <p>Developer Checklist</p>
+      </div>
+
+      <div class="tip-card">
+        <span class="tip-icon">&#128640;</span>
+        <div>
+          <strong>Component Reusability:</strong> Create reusable React components for
+          mentor specialized profile cards and session list items.
+        </div>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">&#128225;</span>
+        <div>
+          <strong>Debounce API Calls:</strong> Don't spam the backend API. Ensure your
+          debounce hook is working before testing mentor discovery tools extensively.
+        </div>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">&#127912;</span>
+        <div>
+          <strong>Graceful Loading:</strong> Implement UI Skeletons early so the interface
+          never looks broken while fetching mentor availability schedules or pending
+          requests.
+        </div>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">&#128194;</span>
+        <div>
+          <strong>Project Structure:</strong> Maintain clear separation of Custom Hooks
+          for Axios, Global States for Auth, and UI components.
+        </div>
+      </div>
+
+      <div
+        style="
+          text-align: center;
+          padding: 40px 0 0;
+          color: var(--text);
+          font-size: 0.95rem;
+        ">
+        <strong style="color: var(--primary); font-size: 1.1rem"
+          >Good Luck! Hassan ELDash💖</strong
+        >
+      </div>
+    </div>
+  </body>
+</html>
